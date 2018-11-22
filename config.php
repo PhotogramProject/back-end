@@ -1,3 +1,3 @@
 <?php
-$mysqli = mysqli_connect("sample_host", "sample_username", "sample_password", "sample_database");
+$mysqli = mysqli_connect("localhost", "stomin", "1q2a3z4", "photogram");
 $mysqli->set_charset("utf8");
