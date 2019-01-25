@@ -1,0 +1,10 @@
+config.php
+index.php
+
+vendor/
+.idea/
+
+composer.json
+composer.lock
+get_all.php
+index.html
