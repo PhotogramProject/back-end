@@ -1,33 +1,4 @@
 <?php
-//function getGps($exifCoord, $hemi) {
-//
-//    $degrees = count($exifCoord) > 0 ? gps2Num($exifCoord[0]) : 0;
-//    $minutes = count($exifCoord) > 1 ? gps2Num($exifCoord[1]) : 0;
-//    $seconds = count($exifCoord) > 2 ? gps2Num($exifCoord[2]) : 0;
-//
-//    $flip = ($hemi == 'W' or $hemi == 'S') ? -1 : 1;
-//
-//    return round($flip * ($degrees + $minutes / 60 + $seconds / 3600), 5);
-//
-//}
-//
-//function gps2Num($coordPart) {
-//
-//    $parts = explode('/', $coordPart);
-//
-//    if (count($parts) <= 0)
-//        return 0;
-//
-//    if (count($parts) == 1)
-//        return $parts[0];
-//
-//    return floatval($parts[0]) / floatval($parts[1]);
-//}
-//
-//$exif = exif_read_data(__DIR__ . "/../../uploads/users/deyan_peychev/15419713890.jpeg");
-//var_dump(getGps($exif['GPSLongitude'], $exif['GPSLongitudeRef']));
-//exit();
-
 $journey_id = intval(trim(str_replace("/", "", $__id)));
 $journey_data = json_decode($_POST['journey-data']);
 $query = "UPDATE `journeys` SET `name` = ?,`description` = ?, `ratings` = ?, `total_reviewers` = ? WHERE id = ?";
