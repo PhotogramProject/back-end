@@ -33,19 +33,33 @@ if ($data["roles"] == 1) {
         unlink($dir);
     }
 
-    $dir = __DIR__ . "/../uploads/users/" . $data["username"];
-    if (is_dir($dir)) {
-        $objects = scandir($dir);
-        foreach ($objects as $object) {
-            if ($object != "." && $object != "..") {
-                if (filetype($dir . "/" . $object) == "dir")
-                    rmdir($dir . "/" . $object);
-                else unlink($dir . "/" . $object);
-            }
+    $query = "SELECT file_name FROM `images` WHERE journey_id= ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param('i', $journey_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        $query = "DELETE FROM `images` WHERE file_name = ?";
+        $stmt = $mysqli->prepare($query);
+        $stmt->bind_param('s', $file_name);
+        $file_name = $row['file_name'];
+        $stmt->execute();
+
+        $dir = __DIR__ . "/../../uploads/images/" . $file_name;
+        $last_ch = strrpos($dir, '/', -1);
+        $folder = substr($dir, 0, $last_ch);
+        if (is_file($dir . "_o.jpg")) {
+            unlink($dir . "_o.jpg");
+            unlink($dir . "_s.jpg");
+            unlink($dir . "_m.jpg");
+            unlink($dir . "_l.jpg");
         }
-        reset($objects);
-        rmdir($dir);
+        rmdir($folder);
     }
+
+    $stmt->free_result();
+    $result->close();
 
     $query = "SELECT id FROM `journeys` WHERE author = ?";
     $stmt = $mysqli->prepare($query);

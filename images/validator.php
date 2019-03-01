@@ -27,6 +27,7 @@ function gps2Num($coordPart)
 
 $file = $_FILES["imageToValidate"]["tmp_name"];
 $exif = exif_read_data($file);
+$filesize = filesize($file);
 
 if (array_key_exists('Make', $exif) == true && array_key_exists('Model', $exif) == true && array_key_exists('DateTimeOriginal', $exif) == true) {
 
@@ -44,7 +45,8 @@ if (array_key_exists('Make', $exif) == true && array_key_exists('Model', $exif) 
         'data' => [
             'hasExif' => true,
             'location' => $location,
-            'dateTaken' => $exif['DateTimeOriginal']
+            'dateTaken' => $exif['DateTimeOriginal'],
+            'size' => $filesize
         ]
     ], JSON_UNESCAPED_UNICODE);
 } else {
@@ -53,7 +55,8 @@ if (array_key_exists('Make', $exif) == true && array_key_exists('Model', $exif) 
         'msg' => 'Снимката не съдържа EXIF данни.',
         'data' => [
             'hasExif' => false,
-            'location' => []
+            'location' => [],
+            'size' => $filesize
         ]
     ], JSON_UNESCAPED_UNICODE);
 }

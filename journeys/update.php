@@ -1,33 +1,4 @@
 <?php
-//function getGps($exifCoord, $hemi) {
-//
-//    $degrees = count($exifCoord) > 0 ? gps2Num($exifCoord[0]) : 0;
-//    $minutes = count($exifCoord) > 1 ? gps2Num($exifCoord[1]) : 0;
-//    $seconds = count($exifCoord) > 2 ? gps2Num($exifCoord[2]) : 0;
-//
-//    $flip = ($hemi == 'W' or $hemi == 'S') ? -1 : 1;
-//
-//    return round($flip * ($degrees + $minutes / 60 + $seconds / 3600), 5);
-//
-//}
-//
-//function gps2Num($coordPart) {
-//
-//    $parts = explode('/', $coordPart);
-//
-//    if (count($parts) <= 0)
-//        return 0;
-//
-//    if (count($parts) == 1)
-//        return $parts[0];
-//
-//    return floatval($parts[0]) / floatval($parts[1]);
-//}
-//
-//$exif = exif_read_data(__DIR__ . "/../../uploads/users/deyan_peychev/15419713890.jpeg");
-//var_dump(getGps($exif['GPSLongitude'], $exif['GPSLongitudeRef']));
-//exit();
-
 $journey_id = intval(trim(str_replace("/", "", $__id)));
 $journey_data = json_decode($_POST['journey-data']);
 $query = "UPDATE `journeys` SET `name` = ?,`description` = ?, `ratings` = ?, `total_reviewers` = ? WHERE id = ?";
@@ -42,49 +13,6 @@ $stmt->bind_param('ssssi', $name, $description, $ratings, $total_reviewers, $id)
 $stmt->execute();
 $stmt->free_result();
 $stmt->close();
-
-$query = "INSERT INTO `images`(`journey_id`, `make`, `model`, `date_taken`, `lat`, `lon`, `resolution_w`, `resolution_h`, `flash`, `iso`, `focal_length`, `file_name`, `size`, `comment`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-$stmt = $mysqli->prepare($query);
-$stmt->bind_param('isssddiisidsds', $id, $make, $model, $date_taken, $lat, $lon, $res_w, $res_h, $flash, $iso, $focal_length, $image_filename, $size, $images_comment);
-
-$images_cnt = count($_FILES);
-for ($i = 0; $i < $images_cnt; $i++) {
-    $image = $_FILES[$i];
-    $suffix = explode("/", $image['type'])[1];
-    $filename = time() . $i . "." . $suffix;
-    move_uploaded_file($image['tmp_name'], __DIR__ . "/../../uploads/users/" . $decoded_jwt->username . "/" . $filename);
-
-    $image_data = json_decode($_POST['imagesForUpload'][$i]);
-    $id = $journey_id;
-    $make = (isset($image_data->make)) ? $image_data->make : "";
-    $model = (isset($image_data->model)) ? $image_data->model : "";
-    $date_taken = (isset($image_data->dateTaken)) ? $image_data->dateTaken : "";
-    $location = (isset($image_data->location)) ? $image_data->location : NULL;
-    if (is_null($location)) {
-        $lat = 0;
-        $lon = 0;
-    } else {
-        $lat = floatval($location[0]);
-        $lon = floatval($location[1]);
-    }
-    $resolution = (isset($image_data->resolution)) ? $image_data->resolution : NULL;
-    if (is_null($resolution)) {
-        $res_w = 0;
-        $res_h = 0;
-    } else {
-        $res_w = floatval($resolution[0]);
-        $res_h = floatval($resolution[1]);
-    }
-    $flash = (isset($image_data->flash)) ? $image_data->flash : "";
-    $iso = (isset($image_data->iso)) ? intval($image_data->iso) : 0;
-    $focal_length = (isset($image_data->focalLength)) ? floatval($image_data->focalLength) : 0;
-    $size = (isset($image_data->size)) ? floatval($image_data->size) : 0;
-    $image_filename = $decoded_jwt->username . "/" . $filename;
-    $image_comment = (isset($image_data->comment)) ? $image_data->comment : "";
-
-    $stmt->execute();
-}
-$stmt->free_result();
 
 $query = "UPDATE `images` SET `comment`= ? WHERE id = ?";
 $stmt = $mysqli->prepare($query);

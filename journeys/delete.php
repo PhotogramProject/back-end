@@ -6,7 +6,7 @@ $journey_id = intval(trim(str_replace("/", "", $__id)));;
 
 $stmt->execute();
 $result = $stmt->get_result();
-$data = $result->fetch_assoc();
+$journey_data = $result->fetch_assoc();
 $stmt->free_result();
 
 if ($result->num_rows == 0) {
@@ -14,7 +14,6 @@ if ($result->num_rows == 0) {
     exit();
 }
 
-$mysqli = mysqli_connect("localhost", "stomin", "1q2a3z4", "photogram");
 $query = "SELECT roles FROM `users` WHERE id = ?";
 $stmt = $mysqli->prepare($query);
 $stmt->bind_param('i', $id);
@@ -25,7 +24,7 @@ $result = $stmt->get_result();
 $data = $result->fetch_assoc();
 $stmt->free_result();
 
-if ($data["roles"] == 0 && $id != $data['author']) {
+if ($data["roles"] == 0 && $id != $journey_data['author']) {
     echo json_encode(['success' => false, 'msg' => 'Нямате права за да изпълните тази заявка.'], JSON_UNESCAPED_UNICODE);
     exit();
 } else {
@@ -43,10 +42,16 @@ if ($data["roles"] == 0 && $id != $data['author']) {
         $file_name = $row['file_name'];
         $stmt->execute();
 
-        $dir = __DIR__ . "/../../uploads/users/" . $row["file_name"];
-        if (is_file($dir)) {
-            unlink($dir);
+        $dir = __DIR__ . "/../../uploads/images/" . $file_name;
+        $last_ch = strrpos($dir, '/', -1);
+        $folder = substr($dir, 0, $last_ch);
+        if (is_file($dir . "_o.jpg")) {
+            unlink($dir . "_o.jpg");
+            unlink($dir . "_s.jpg");
+            unlink($dir . "_m.jpg");
+            unlink($dir . "_l.jpg");
         }
+        rmdir($folder);
     }
 
     $query = "DELETE FROM `journeys` WHERE id = ?";
