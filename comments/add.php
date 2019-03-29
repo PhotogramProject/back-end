@@ -14,7 +14,22 @@ if (trim($comment_data->type) == 'image' || trim($comment_data->type) == 'journe
         $stmt->free_result();
     }
 
-    echo json_encode(['success' => true, 'msg' => "Коментарът е добавен."], JSON_UNESCAPED_UNICODE);
+    $query = "SELECT id FROM `comments` ORDER BY `comments`.`id` DESC LIMIT 1";
+    $stmt = $mysqli->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $comment_data = $result->fetch_assoc();
+
+    $result->free_result();
+    $stmt->close();
+
+    echo json_encode([
+        'success' => true,
+        'msg' => "Коментарът е добавен.",
+        'data' => [
+            'id' => $comment_data['id']
+        ]
+    ], JSON_UNESCAPED_UNICODE);
 } else {
     echo json_encode(['success' => false, 'msg' => "Неуспешен опит за връзка."], JSON_UNESCAPED_UNICODE);
     exit();
